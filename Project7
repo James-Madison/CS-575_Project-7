@@ -1,0 +1,200 @@
+//
+// main.cpp
+// Program 7
+// 
+// Name: James Madison
+// Modified:2018-04-17
+//
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <iomanip>
+
+using namespace std;
+
+int main ()
+
+{
+//Variables
+ifstream fin;
+ofstream fout;
+string name;
+double t1_avg, t2_avg, t3_avg;
+double avg;
+char grade;
+double t1, t2, t3, tdrop;
+double cw_tdrop, cw_avg;
+double tsum;
+double t1_sum = 0;
+double t2_sum = 0;
+double t3_sum = 0;
+int cw_total;
+int i = 0;
+
+
+//Open input file, create output file
+fin.open("student_scores.txt");
+fout.open("sample_grade.txt");
+
+//Test input file
+if (fin)
+{
+cout << "Processing . . . " << endl;
+cout << endl;
+}
+else
+{
+cout << "Error: File not found." << endl;
+cout << endl;
+system("pause");
+return 0;
+}
+
+// Skip header line of input file
+fin.ignore(1000,'\n');
+
+// Write header line for output file
+fout << left << setfill('.')
+<< setw(28) << "Name"
+<< right
+<< setw(4) << "T1" << setfill(' ')
+<< setw(6) << "T2"
+<< setw(6) << "T3"
+<< setw(6) << "Drop"
+<< setw(8) << "Total"
+<< setw(6) << "Grade" << '\n' << '\n'
+<< endl;
+
+// Create loop to input data from file & export data to new file
+while (!fin.eof())
+{
+
+// Get name
+getline(fin, name, ',');
+
+// Get T1
+fin >> t1;
+
+// Get T2
+fin.ignore(1, ',');
+fin >> t2;
+
+// Get T3
+fin.ignore(1, ',');
+fin >> t3;
+
+
+// Find lowest score
+tdrop = t1;
+if (tdrop > t2)
+tdrop = t2;
+if (tdrop > t3)
+tdrop = t3;
+
+
+// Sum test scores
+tsum = ( t1 + t2 + t3 - tdrop);
+
+// Average the test scores (dropping the lowest)
+avg = tsum/2;
+
+// Return letter grade
+if (avg >= 90 && avg <= 100)
+grade = 'A';
+else if (avg >= 80 && avg <= 89)
+grade = 'B';
+else if (avg >= 70 && avg <= 79)
+grade = 'C';
+else if (avg >= 60 && avg <= 69)
+grade = 'D';
+else
+grade = 'F';
+
+// Running sum for T1
+t1_sum = t1_sum + t1;
+
+// Running sum for T2
+t2_sum = t2_sum + t2;
+
+// Running sum for T3
+t3_sum = t3_sum + t3;
+
+// Counter
+i++;
+
+// Output name, T1, T2, T3, Drop, Total, Grade
+fout << left << setfill('.')
+<< setw(30) << name
+<< right
+<< setw(4) << t1 << setfill(' ')
+<< setw(6) << t2
+<< setw(6) << t3
+<< setw(6) << tdrop
+<< setw(8) << tsum
+<< setw(6) << grade
+<< '\n';
+
+}
+
+
+// Calculate class-wide average for T1
+t1_avg = t1_sum/i;
+
+// Calculate class-wide average for T2
+t2_avg = t2_sum/i;
+
+// Calculate class-wide average for T3
+t3_avg = t3_sum/i;
+
+// Calc class-wide drop score
+cw_tdrop = t1_avg;
+if (cw_tdrop > t2_avg)
+cw_tdrop = t2_avg;
+if (cw_tdrop > t3_avg)
+cw_tdrop = t3_avg;
+
+// Calculate class-wide total
+cw_total = (t1_avg + t2_avg + t3_avg - cw_tdrop);
+
+// Calc class-wide average
+cw_avg = cw_total/2;
+
+// Return class grade
+if (cw_avg >= 90 && cw_avg <= 100)
+grade = 'A';
+else if (cw_avg >= 80 && cw_avg <= 89)
+grade = 'B';
+else if (cw_avg >= 70 && cw_avg <= 79)
+grade = 'C';
+else if (cw_avg >= 60 && cw_avg <= 69)
+grade = 'D';
+else
+grade = 'F';
+
+// Output Footer
+fout << '\n' << left << setfill('.')
+<< setw(28) << "Average"
+<< right
+<< setw(4) << std::fixed << setprecision(1) << t1_avg << setfill(' ')
+<< setw(6) << std::fixed << setprecision(1) << t2_avg
+<< setw(6) << std::fixed << setprecision(1) << t3_avg
+<< setw(6) << " "
+<< setw(8) << cw_total
+<< setw(6) << grade
+<< endl;
+
+
+// Return number of students
+fout << '\n' << endl;
+fout << "Number of students: " << i << endl;
+
+
+// Close files
+fin.close();
+fout.close();
+
+
+return 0;
+
+}
